@@ -4,6 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -38,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
     private static MovieApiService apiService = ApiConfig.getClient().create(MovieApiService.class);
     private ActivityMainBinding binding;
     private DatabaseHelper databaseHelper;
+
+    public static final String ACTION_MOVIE_STATUS = "movie_status";
+    private BroadcastReceiver movieReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,19 +119,8 @@ public class MainActivity extends AppCompatActivity {
                         String releaseDate = movie.getDate();
                         databaseHelper = new DatabaseHelper(this);
                         databaseHelper.addMovie(id,title, releaseDate);
-                        Snackbar.make(binding.layout,
-                                movie.getTitle() + " is available",
-                                Snackbar.LENGTH_SHORT).show();
 
-                        Snackbar mySnackbar = Snackbar.make(binding.layout,
-                                movie.getTitle() + " is available", Snackbar.LENGTH_SHORT);
-                        mySnackbar.setAction("VIEW", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                //Yeah
-                            }
-                        });
-                        mySnackbar.show();
+                        notification(title);
                     });
                 }
             } catch (InterruptedException e) {
@@ -132,6 +128,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    private void notification(String title){
+
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(() -> {
+            Intent notifyFinishIntent = new Intent().setAction(MainActivity.ACTION_MOVIE_STATUS);
+            sendBroadcast(notifyFinishIntent);
+        }, 3000);
+        movieReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Snackbar mySnackbar = Snackbar.make(binding.layout,
+                        title + " is available", Snackbar.LENGTH_SHORT);
+                mySnackbar.setAction("VIEW", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Yeah
+                    }
+                });
+                mySnackbar.show();
+            }
+        };
+        IntentFilter movieIntentFilter = new IntentFilter(ACTION_MOVIE_STATUS);
+        registerReceiver(movieReceiver, movieIntentFilter);
+    }
+
     private void initRv() {
         binding.rvMovie.setLayoutManager(new LinearLayoutManager(this));
         binding.rvMovie.setHasFixedSize(true);
@@ -142,5 +163,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         executor.shutdown();
+        if (movieReceiver != null) {
+            unregisterReceiver(movieReceiver);
+        }
     }
 }
