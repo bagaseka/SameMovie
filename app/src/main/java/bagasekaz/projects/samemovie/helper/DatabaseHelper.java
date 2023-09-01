@@ -14,7 +14,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_RELEASE = "releaseDate";
-    // ... tambahkan kolom lain yang diperlukan
 
     private static final String TABLE_CREATE =
             "CREATE TABLE " + TABLE_MOVIES + " (" +
@@ -37,7 +36,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // Menambahkan data film
     public long addMovie(String id, String title, String releaseDate) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -46,17 +44,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_RELEASE, releaseDate);
         return db.insert(TABLE_MOVIES, null, values);
     }
-
-    // Menghapus data film berdasarkan ID
     public int deleteMovie(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_MOVIES, COLUMN_ID + " = ?", new String[]{id});
     }
 
-    // Mendapatkan semua data film
+    public int deleteAllMovies() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_MOVIES, null, null);
+    }
+
     public Cursor getAllMovies() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.query(TABLE_MOVIES, null, null, null, null, null, null);
+        return db.query(TABLE_MOVIES, null, null, null, null, null, null, "10");
+    }
+
+    public int getCountData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("SELECT * FROM "+TABLE_MOVIES, null).getCount();
     }
 }
 
