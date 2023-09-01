@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SameMovie</string>
+    <string name="splash_screen_error">Koneksi dan Data Tidak Tersedia</string>
 </resources>

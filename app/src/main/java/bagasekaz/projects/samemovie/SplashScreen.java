@@ -1,10 +1,8 @@
 package bagasekaz.projects.samemovie;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -12,7 +10,9 @@ import android.view.View;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import bagasekaz.projects.samemovie.helper.DatabaseHelper;
 import bagasekaz.projects.samemovie.helper.NetworkHelper;
+import bagasekaz.projects.samemovie.model.Movie;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -21,20 +21,28 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        if (!NetworkHelper.isInternetConnected(SplashScreen.this)) {
+        if (!NetworkHelper.isInternetConnected(SplashScreen.this) && !checkDataLocal()) {
             showBottomSheetError();
         }
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-//                Intent mainIntent = new Intent(SplashScreen.this, MainActivity.class);
-//                startActivity(mainIntent);
-//                finish();
+                Intent mainIntent = new Intent(SplashScreen.this, MainActivity.class);
+                startActivity(mainIntent);
+                finish();
             }
         }, 3000);
+    }
 
-
+    private boolean checkDataLocal(){
+        boolean check = false;
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        Cursor cursor = databaseHelper.getAllMovies();
+        if (cursor == null) {
+            check = false;
+        }
+        return check;
     }
 
     private void showBottomSheetError() {
@@ -43,5 +51,6 @@ public class SplashScreen extends AppCompatActivity {
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
     }
+
 
 }
