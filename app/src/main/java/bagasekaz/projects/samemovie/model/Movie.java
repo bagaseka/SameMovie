@@ -10,6 +10,14 @@ public class Movie {
     @SerializedName("release_date")
     private String date;
 
+    public Movie() {}
+
+    public Movie(String id, String title, String date) {
+        this.id = id;
+        this.title = title;
+        this.date = date;
+    }
+
     public String getId() {
         return id;
     }

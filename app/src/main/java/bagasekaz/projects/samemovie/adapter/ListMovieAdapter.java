@@ -20,6 +20,7 @@ public class ListMovieAdapter extends RecyclerView.Adapter<ListMovieAdapter.List
 
     public ListMovieAdapter(ArrayList<Movie> list) {
         this.listMovie = list;
+        notifyDataSetChanged();
     }
 
     @NonNull
