@@ -1,7 +1,11 @@
 package bagasekaz.projects.samemovie;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +19,9 @@ import bagasekaz.projects.samemovie.helper.NetworkHelper;
 import bagasekaz.projects.samemovie.model.Movie;
 
 public class SplashScreen extends AppCompatActivity {
+
+
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,7 @@ public class SplashScreen extends AppCompatActivity {
                 finish();
             }
         }, 3000);
+
     }
 
     private boolean checkDataLocal(){
